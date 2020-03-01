@@ -10,11 +10,11 @@ For example, the structure should look like this:
 ```
 pdfs
 ├── Lecture1
-   │   ├── Chapter01.pdf
-   │   └── Chapter02.pdf
-   └── Lecture2
-       ├── Slides-01.pdf
-       └── Slides-02.pdf
+│   ├── Chapter01.pdf
+│   └── Chapter02.pdf
+└── Lecture2
+    ├── Slides-01.pdf
+    └── Slides-02.pdf
 ```
 In this example `Lecture1` and `Lecture2` are going to be the `categories` used in the queries.
 
