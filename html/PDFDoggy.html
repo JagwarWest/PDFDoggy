@@ -5,6 +5,8 @@
             width: 20px;
             height: 20px;
             float: right;
+            padding-left: 8px;
+            margin-right: -8px;
             cursor: pointer;
         }
 
@@ -164,7 +166,7 @@
         <div id="search_view" align="center" style="display:none">
             <br>
             <br>
-            <input id="search_terms" placeholder="term1 a_2nd_term -not_that_term" style="width:800px"></input>
+            <input id="search_terms" placeholder="term1 a_short_phrase -not_this_term" style="width:800px"></input>
             <br><br>
 
             <table>
@@ -257,19 +259,19 @@
 
             <p>
                 You can also exlude certain terms/phrases from your search by prepending an "-" to the term (e.g., "-not_wanted").
-                Note, that the exclusion happens on a per-page level, meaning, that excluding a term does not disqualify whole documents.
+                Keep in mind that the exclusion happens on a per-page level, meaning, that excluding a term does not disqualify whole documents.
                 Please note, that the program ignores searches with just excluding terms.
             </p>
 
             <p>
-                When you upload a document you specify a category to it (e.g., lecutre name). 
+                When you upload a document you specify a category to it (e.g., lecture name). 
                 You can use these categories to refine your search results, e.g., by excluding/including the respective categories.
-                Just check the respective category checkbox and search for you terms within these categories.
-                Please note, that there are also handy buttons to deselect or select all category checkboxes.
+                Just click on the respective category (so it is blue (include) or white (exclude)) and search for your terms within the selected (blue) categories.
+                Please note, that there are also handy buttons to deselect or select all categories.
             </p>
 
             <p>
-                Additionally, the software offers additional checkboxes to further refine the search.
+                Additionally, the software offers additional search buttons to further refine the search.
                 By selecting the "Terms have to be on one page" checkbox you force the software to look for pages where all terms are present.
             </p>
             <p>
@@ -277,7 +279,7 @@
             </p>
 
             <p>
-                By selecting none of the above, you basically search for each term in each document. Here it does not matter if some terms are missing in the document.
+                By selecting the simple search button, you basically search for each term in each document. Here it does not matter if some terms are missing in the document.
             </p>
 
             <p>
@@ -400,8 +402,9 @@
 
         <!-- Search PDFs -->
         <script>
+            var last_search_flavor = "normal";
             function search_documents(flavor) {
-
+                last_search_flavor = flavor;
                 var terms = document.getElementById("search_terms").value.trim(); 
                 var xhr = new XMLHttpRequest();
 
@@ -449,7 +452,11 @@
                 }
 
                 else {
-                    var html = "<div style='border-bottom: 2px solid;></div>";
+                    var html = "";
+                    if(last_search_flavor != "matchall") {
+                        html = "Legend:<table><tr><td style='color: blue;'><u>42</b></td><td>: this page contains one search term</td></tr><tr><td style='color: blue;'><b><u>42</u></b></td><td>: multiple (but not all) search terms are on this page</td></tr><tr><td style='color: #00bb00'><b><u>42</u></b></td><td>: all search terms are on this page</td></tr></table>"
+                    }
+                    html += "<div style='border-bottom: 2px solid;></div>";
                     html += "<div style='border-bottom: 2px solid;></div>";
                     // For each category
                     for(var category of categories) {
@@ -546,9 +553,18 @@
                 xhr.open("GET", "/api/documents/");
                 xhr.addEventListener("load", function() {
                     var docs = JSON.parse(xhr.responseText);
-                    document.getElementById("pdf_list").innerHTML = "<h2>Uploaded documents</h2>";
+                    
     
                     var sorted_keys = Object.keys(docs).sort()
+
+                    var doc_count = 0;
+                    for(var i=0; i<sorted_keys.length; i++) {
+                        doc_count += docs[sorted_keys[i]].length;
+                    }
+
+
+                    document.getElementById("pdf_list").innerHTML = "<h2>Uploaded documents (" + doc_count + " in total)</h2>";
+
 
                     var tmp_object = {};
                     for(var i=0; i<sorted_keys.length; i++) {
