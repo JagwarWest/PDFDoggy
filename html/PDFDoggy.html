@@ -100,6 +100,14 @@
             background: #FFCC00
         }
 
+        .yellow_background {
+            border-color: black;
+            background: #FFFF00;
+        }
+        .yellow_background:hover {
+            background: #EEEE00;
+        }
+
         .white_background {
             background: #FFFFFF
         }
@@ -172,16 +180,22 @@
             <table>
                 <tr>
                     <td>
-                        <span id="searchbutton" onclick="search_documents('normal')" class="menu_tab grey_background" title="Normal search. At least one term has to be included in a document">Search</span>
+                        <span onclick="search_documents()" class="menu_tab grey_background">Search</span>
                     </td>
-
-                    <td id="matchall" onclick="search_documents('matchall')" class="menu_tab grey_background" title="Only find pages with all the specified terms">Search (all terms on page)</td>
-
-                    <td id="in_one_document" onclick="search_documents('in_one_document')" class="menu_tab grey_background" title="Only find documents with all specified terms included (do not have to be on the same page)" >Search (all terms in document)</td>
                 </tr>
             </table>
-            
-            <br><br>
+            <br>
+
+            <h3>Search Modes</h3>
+            <table>
+                <tr>
+                    <td checked="true"  id="matchall" onclick="select_search_mode(0)" class="menu_tab yellow_background" title="Only find pages with all the specified terms">Pages contain all terms</td>
+                    <td checked="false" id="normal" onclick="select_search_mode(1)" class="menu_tab white_background" title="Normal search. At least one term has to be included in a document">Normal search</td>
+                    <td checked="false" id="in_one_document" onclick="select_search_mode(2)" class="menu_tab white_background" title="Only find documents with all specified terms included (do not have to be on the same page)">Documents contain all terms</td>
+                </tr>
+            </table>
+
+            <br>
             <h3>Select Categories for the Search</h3>
             <div align="center">
                 <table>
@@ -321,7 +335,7 @@
 
             document.getElementById("search_terms").addEventListener('keypress', function(event) {
                 if (event.keyCode == 13) {
-                    search_documents('normal');
+                    search_documents();
                 }
             });
 
@@ -360,7 +374,7 @@
                     s.setAttribute("style", "display:none");
                 }
                 sections[index].setAttribute("style", "");
-            }
+            } 
 
             function tab_selection(index) {
                 for(var i in tabs) {
@@ -394,16 +408,44 @@
                 });
                 xhr.send();
             }
-          function play_audio(bark) {
-            var audio = document.getElementById(bark);
-            audio.play();
-          }
+
+            var mode_selectors = [
+                document.getElementById("matchall"),
+                document.getElementById("normal"),
+                document.getElementById("in_one_document")
+            ];
+
+            function select_search_mode(index) {
+                for(var i=0; i<mode_selectors.length;i++) {
+                    if(i != index) {
+                        mode_selectors[i].setAttribute("class", "menu_tab white_background");
+                        mode_selectors[i].setAttribute("checked", "false");
+                    }
+
+                    else {
+                        mode_selectors[i].setAttribute("class", "menu_tab yellow_background");
+                        mode_selectors[i].setAttribute("checked", "true");
+                    }
+                }
+            }
+
+            function play_audio(bark) {
+                var audio = document.getElementById(bark);
+                audio.play();
+            }
         </script>
 
         <!-- Search PDFs -->
         <script>
             var last_search_flavor = "normal";
-            function search_documents(flavor) {
+            function search_documents() {
+                var flavor = "normal";
+                for(var i=0; i<mode_selectors.length;i++) {
+                    if(mode_selectors[i].getAttribute("checked") === "true") {
+                        flavor = mode_selectors[i].getAttribute("id");
+                        break;
+                    }
+                }
                 last_search_flavor = flavor;
                 var terms = document.getElementById("search_terms").value.trim(); 
                 var xhr = new XMLHttpRequest();
