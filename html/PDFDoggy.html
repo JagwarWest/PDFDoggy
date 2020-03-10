@@ -1,129 +1,7 @@
 <html>
-    <meta charset="utf-8">
-    <style>
-        .pictogram {
-            width: 20px;
-            height: 20px;
-            float: right;
-            padding-left: 8px;
-            margin-right: -8px;
-            cursor: pointer;
-        }
-
-        .menu_tab {
-            border-style: solid;
-            text-align: center;
-            vertical-align: middle;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-right: 15px;
-            padding-left: 15px;
-            cursor: pointer;
-            margin-right: 5px;
-            margin-left: 5px;
-            font-size: 18px;
-        }
-
-        .menu_tab_selected {
-            border-style: solid;
-            text-align: center;
-            vertical-align: middle;
-            font-weight: bold;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-right: 15px;
-            padding-left: 15px;
-            cursor: pointer;
-            margin-right: 5px;
-            margin-left: 5px;
-            font-size: 18px;
-        }
-
-        .category_tag {
-            border-radius: 25px;
-            border-style: solid;
-            text-align: center;
-            vertical-align: middle;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-right: 15px;
-            padding-left: 15px;
-            cursor: pointer;
-            margin-right: 5px;
-            margin-left: 5px;
-            font-size: 18px;
-        }
-
-        .purple_background {
-            color: white;
-            border-color: black;
-            background: #BB00BB
-        }
-        .purple_background:hover {
-            background: #EE00EE
-        }
-
-
-        .blue_background {
-            color: white;
-            border-color: black;
-            background: #00AAFF
-        }
-        .blue_background:hover {
-            background: #00CCFF
-        }
-
-        .red_background {
-            color: white;
-            border-color: black;
-            background: #EE0000
-        }
-        .red_background:hover {
-            background: #FF0000
-        }
-
-        .green_background {
-            color: white;
-            border-color: black;
-            background: #88DD00
-        }
-        .green_background:hover {
-            background: #AADD00
-        }
-
-        .orange_background {
-            color: white;
-            border-color: black;
-            background: #FFAA00
-        }
-        .orange_background:hover {
-            background: #FFCC00
-        }
-
-        .yellow_background {
-            border-color: black;
-            background: #FFFF00;
-        }
-        .yellow_background:hover {
-            background: #EEEE00;
-        }
-
-        .white_background {
-            background: #FFFFFF
-        }
-        .white_background:hover {
-            background: #EEEEEE
-        }
-
-        .grey_background {
-            background: #BBBBBB;
-        }
-        .grey_background:hover {
-            background: #EEEEEE;
-        }
-    </style>
-
     <head>  
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/css/pdfdoggy.css">
         <title>PDF Doggy</title>
     </head>
 
@@ -200,10 +78,10 @@
             <div align="center">
                 <table>
                 <tr>
-                    <td class="menu_tab grey_background" onclick="select_checkboxes(true)">
+                    <td class="menu_tab grey_background" onclick="select_categories(true)">
                         Select all
                     </td>
-                    <td class="menu_tab grey_background" onclick="select_checkboxes(false)">
+                    <td class="menu_tab grey_background" onclick="select_categories(false)">
                         Deselect all
                     </td>
                 </tr>
@@ -221,17 +99,15 @@
 
         <div id="manage_documents" style="display: none" align="center">
             <div id="pdf_upload">
-                <h2>Upload document</h2>
+                <h2>Upload documents</h2>
+                <h4>You can upload multiple files at once</h4>
                 <table>
                     <tr>
                         <td>Category:</td><td><input id="upload_category" type="text" placeholder="Category..."></td>
-                    </tr>
+                    </tr> 
                     <tr>
-                        <td>Filename:</td><td><input id="upload_filename" type="text" placeholder="Filename..."></td>
-                    </tr>
-                    <tr>
-                        <td>File:</td><td><input id="upload_file" type='file' name='document' oninput="on_fileupload_input()"></td>
-                    </tr>                
+                        <td>File:</td><td><input id="upload_file" type='file' name='document' multiple></td>
+                    </tr>            
                 </table>
                 <br>
                 <span id="uploadbutton" class="menu_tab grey_background" onclick="upload_document()">Upload</span>
@@ -310,380 +186,20 @@
         <div id="search_results" style="display:none" align="justify">
         </div>
 
-        <!-- Miscellaneous objects functions -->
-        <script>
-            var manage_documents = 0;
-            var search_results   = 1;
-            var help_menu        = 2;
-            var search_view      = 3;
-
-            let sections = [
-                document.getElementById("manage_documents"),
-                document.getElementById("search_results"),
-                document.getElementById("help_menu"),
-                document.getElementById("search_view")
-            ];
-
-            let tabs = [
-                document.getElementById("list_docs"),
-                document.getElementById("show_help_menu"),
-                document.getElementById("search_docs")
-            ];
-
-            show_section(search_view);
-            tab_selection(2);
-
-            document.getElementById("search_terms").addEventListener('keypress', function(event) {
-                if (event.keyCode == 13) {
-                    search_documents();
-                }
-            });
-
-            String.prototype.capit = function() {
-                return this.charAt(0).toUpperCase() + this.slice(1);
-            }
-
-            create_category_checkbox_table();
-
-            function select_checkboxes(select_value=true) {
-                var checkboxes = document.getElementById("checkboxes").getElementsByTagName("div");
-                for(var checkbox of checkboxes) {
-                    var check_val = checkbox.getAttribute("checked") === "true";
-                    if(select_value != check_val) {
-                        checkbox.click();
-                    }
-                }
-            }
-
-            function category_selection_click(ev) {
-                var current_value = ev.getAttribute("checked") === "true";
-                if(current_value) {
-                    ev.setAttribute("checked", "false");
-                    ev.setAttribute("class", "category_tag white_background");
-                }
-                else {
-                    ev.setAttribute("checked", "true");
-                    ev.setAttribute("class", "category_tag blue_background");
-                }
-            }
-
-            // show one section, hide every other section
-            function show_section(index=pdf_list) {
-                // first hide every thing then show the desired one to make a more fluent appearance
-                for(var s of sections) {
-                    s.setAttribute("style", "display:none");
-                }
-                sections[index].setAttribute("style", "");
-            } 
-
-            function tab_selection(index) {
-                for(var i in tabs) {
-                    if(i != index) {
-                        tabs[i].setAttribute("style", "font-weight: normal;");
-                    }
-                }
-                tabs[index].setAttribute("style", "font-weight: bold;");
-            }
-
-            function create_category_checkbox_table() {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "/api/types/");
-                xhr.addEventListener("load", function() {
-                    let types = JSON.parse(xhr.responseText)["types"].sort();
-                    var category_table = document.getElementById("category_table");
-                    category_table.innerHTML = "";
-                    table_string = "";
-                    var columns = 4
-                    for(var i in types) {
-                        if ((i % columns) == 0) {
-                            table_string += "<tr>";
-                        }
-                        table_string += '<td><div checked="true" class="category_tag blue_background" onclick="category_selection_click(this)">' + types[i] + '</div></td>';
-                        if ((i % columns) == columns-1) {
-                            table_string += "</tr>";
-                        }
-                    }
-                    table_string += "</tr>"
-                    category_table.innerHTML = table_string;
-                });
-                xhr.send();
-            }
-
-            var mode_selectors = [
-                document.getElementById("matchall"),
-                document.getElementById("normal"),
-                document.getElementById("in_one_document")
-            ];
-
-            function select_search_mode(index) {
-                for(var i=0; i<mode_selectors.length;i++) {
-                    if(i != index) {
-                        mode_selectors[i].setAttribute("class", "menu_tab white_background");
-                        mode_selectors[i].setAttribute("checked", "false");
-                    }
-
-                    else {
-                        mode_selectors[i].setAttribute("class", "menu_tab yellow_background");
-                        mode_selectors[i].setAttribute("checked", "true");
-                    }
-                }
-            }
-
-            function play_audio(bark) {
-                var audio = document.getElementById(bark);
-                audio.play();
-            }
-        </script>
 
         <!-- Search PDFs -->
-        <script>
-            var last_search_flavor = "normal";
-            function search_documents() {
-                var flavor = "normal";
-                for(var i=0; i<mode_selectors.length;i++) {
-                    if(mode_selectors[i].getAttribute("checked") === "true") {
-                        flavor = mode_selectors[i].getAttribute("id");
-                        break;
-                    }
-                }
-                last_search_flavor = flavor;
-                var terms = document.getElementById("search_terms").value.trim(); 
-                var xhr = new XMLHttpRequest();
-
-                xhr.open("POST", "/api/search/");
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.addEventListener("load", function() {
-                    var results = display_search_results(JSON.parse(xhr.responseText));
-                });
-
-                // search the selected collections
-                var targets = [];
-                var checkboxes = document.getElementById("category_table").getElementsByTagName("div");
-                for(var cb of checkboxes) {
-                    if(cb.getAttribute("checked") === "true") {
-                        targets.push(cb.textContent);
-                    }
-                }
-
-                if(targets.length == 0) {
-                    alert("You have to select at least one category for a search!");
-                    return;
-                }
-
-                if(terms.length == 0) {
-                    alert("You have to specify a search term!");
-                    return;
-                }
-
-                var terms_object = {
-                    "terms": terms.trim(),
-                    "targets": targets,
-                    "flavor": flavor
-                };
-
-                xhr.send(JSON.stringify(terms_object));
-                var display = document.getElementById("search_results");
-                display.innerHTML = "<b>Waiting for server. A search might take some seconds!";
-            }
-
-            function display_search_results(results) {
-                var categories = Object.keys(results).sort();
-                var display = sections[search_results];
-                if (categories.length == 0) {
-                    display.innerHTML = "<b>There is no document containing those terms";
-                }
-
-                else {
-                    var html = "";
-                    if(last_search_flavor != "matchall") {
-                        html = "Legend:<table><tr><td style='color: blue;'><u>42</b></td><td>: this page contains one search term</td></tr><tr><td style='color: blue;'><b><u>42</u></b></td><td>: multiple (but not all) search terms are on this page</td></tr><tr><td style='color: #00bb00'><b><u>42</u></b></td><td>: all search terms are on this page</td></tr></table>"
-                    }
-                    html += "<div style='border-bottom: 2px solid;></div>";
-                    html += "<div style='border-bottom: 2px solid;></div>";
-                    // For each category
-                    for(var category of categories) {
-                        var documents = Object.keys(results[category]).sort();
-                        for(var doc of documents) {
-                            html += "<br><label style='padding-right: 10px'>"+ category +": </label><a target='_blank' rel='noopener noreferrer' href='"+category+"/"+doc+"'>" + doc + "</a><br><br>";
-
-                            var terms = Object.keys(results[category][doc]).sort();
-                            console.log(terms.length);
-                            for(var term of terms) {
-                                var pages = results[category][doc][term];
-
-                                html += "<li>" + term + ": ";
-                                html += "["
-                                for(var i = 0; i<pages.length; i++) {
-                                    var page = pages[i];
-                                    var same_page_ctr = 0;
-                                    for (var t of terms) {
-                                        if(t != term) {
-                                            if (results[category][doc][t].indexOf(page) != -1) {
-                                                same_page_ctr++;
-                                            }
-                                        }
-                                    }
-                                    var page_refs = "";
-                                    if(same_page_ctr == 0) {
-                                        page_refs = "<a target='_blank' rel='noopener noreferrer' href='"+category+"/"+doc+"#page="+page+"'>"+page+"</a>";
-                                    }
-                                    else {
-                                        if(same_page_ctr == terms.length -1) {
-                                            page_refs = "<b><a style='color: #00bb00' target='_blank' rel='noopener noreferrer' href='"+category+"/"+doc+"#page="+page+"'>"+page+"</a></b>";
-                                        }
-                                        else {
-                                            page_refs = "<b><a target='_blank' rel='noopener noreferrer' href='"+category+"/"+doc+"#page="+page+"'>"+page+"</a></b>";
-                                        }
-                                    }
-                                    if(i < pages.length-1) {
-                                        page_refs += ", ";
-                                    }
-                                    html += page_refs;
-                                }
-                                html += "]";   
-                            }
-                            html += "<br><br>";
-                        }
-                        html += "<div style='border-bottom: 2px solid;'></div>";
-                    }
-                    display.innerHTML = html;
-                }
-                show_section(search_results);
-            }
-        </script>
+        <script src="/static/js/pdfdoggy-search.js"></script>
 
         <!-- List PDFs -->
-        <script>
-            function create_document_table(docs) {
-                   var table_html = "<table style='font-size:8pt' border='1'><thead><tr>";
-
-                    Object.keys(docs).sort().forEach(function(i) {
-                        docs[i].sort();
-                        table_html += "<td style='padding-right:10px'>" + i.capit() + "</td>";
-                    });
-                    table_html += "</tr><thead>";
-
-                    // find largest list
-                    var largest_list = ""
-                    var size = 0;
-
-                    Object.keys(docs).forEach(function(i) {
-                        if(docs[i].length > size) {
-                            largest_list = i;
-                            size = docs[i].length;
-                        }
-                    });
-                    // table body
-                    table_html += "<tbody>"
-                    for(var i = 0; i<size; i++) {
-                        table_html += "<tr>";
-                        Object.keys(docs).sort().forEach(function(key) {
-                            table_html += "<td style='padding-right:10px'>";
-                            if(i < docs[key].length ) {
-                                table_html += "<a style='float:left;' target='_blank' rel='noopener noreferrer' href='/" + key + "/" + docs[key][i] + "'>" + docs[key][i] + "</a><img collection='"+key+"' filename='"+docs[key][i]+"'class='pictogram' src='/static/img/trash.png' onclick='remove_document(event)'/>";
-                            }
-                            table_html += "</td>";
-                        });
-                        table_html += "</tr>";
-                    }
-                    table_html += "</tbody></table><br><br>";
-                    document.getElementById("pdf_list").innerHTML += table_html;
-            }
-
-            function list_documents() {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "/api/documents/");
-                xhr.addEventListener("load", function() {
-                    var docs = JSON.parse(xhr.responseText);
-                    
-    
-                    var sorted_keys = Object.keys(docs).sort()
-
-                    var doc_count = 0;
-                    for(var i=0; i<sorted_keys.length; i++) {
-                        doc_count += docs[sorted_keys[i]].length;
-                    }
-
-
-                    document.getElementById("pdf_list").innerHTML = "<h2>Uploaded documents (" + doc_count + " in total)</h2>";
-
-
-                    var tmp_object = {};
-                    for(var i=0; i<sorted_keys.length; i++) {
-
-                        tmp_object[sorted_keys[i]] = docs[sorted_keys[i]];
-
-                        if((i % 4) == 3) {
-                            create_document_table(tmp_object);
-                            tmp_object = {};
-                        }
-
-                        else {
-                            if((i+1) == sorted_keys.length) {
-                                create_document_table(tmp_object);
-                            }
-                        }
-                    }
-
-                    show_section(manage_documents);
-                }); 
-                xhr.send();
-            }
-        </script>
+        <script src="/static/js/pdfdoggy-listdocs.js"></script>
 
         <!-- File upload -->
-        <script>
-            function on_fileupload_input() {
-                var filename = document.getElementById("upload_file").value.split("\\")[2];
-                var filename_field = document.getElementById("upload_filename");
-                if(filename_field.value.trim() == "") {
-                    filename_field.value = filename;
-                }
-            }
-
-            function upload_document() {
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "/api/documents/upload/");
-                xhr.addEventListener("load", function (e) {
-                    console.log(xhr.responseText);
-                    alert(xhr.responseText);
-                    create_category_checkbox_table();
-                    document.getElementById("upload-info").innerHTML = "";
-                    document.getElementById("upload_filename").value = "";
-                    list_documents();
-                });
-
-                var formData = new FormData();
-                formData.append("filename", document.getElementById("upload_filename").value);
-                formData.append("collection", document.getElementById("upload_category").value);
-                formData.append("document", document.getElementById("upload_file").files[0])
-                xhr.send(formData);
-                document.getElementById("upload-info").innerHTML = "<br>This upload might take some time!";  
-                event.preventDefault();
-                return false;  
-            }
-        </script>
+        <script src="/static/js/pdfdoggy-upload.js"></script>
 
         <!-- Remove PDFs -->
-        <script>
-            function remove_document(event) {
-                console.log("Event", event);
-                if( confirm("Do you really want to remove '" + event.target.getAttribute("filename") + "'?")) {     
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "/api/documents/remove/");
-                    xhr.addEventListener("load", function() {
-                        list_documents();
-                        create_category_checkbox_table();
-                    });
-                    xhr.setRequestHeader("Content-Type", "application/json");
+        <script src="/static/js/pdfdoggy-delete.js"></script>
 
-                    var remove_doc = {
-                        "collection": event.target.getAttribute("collection"),
-                        "filename": event.target.getAttribute("filename")
-                    }
-                    xhr.send(JSON.stringify(remove_doc));
-                }
-            }    
-        </script>
+        <!-- Miscellaneous objects functions -->
+        <script src="/static/js/pdfdoggy-misc.js"></script>
     </body>
 </html>

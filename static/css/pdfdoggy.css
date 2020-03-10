@@ -1,0 +1,104 @@
+.pictogram {
+    width: 20px;
+    height: 20px;
+    float: right;
+    padding-left: 8px;
+    margin-right: -8px;
+    cursor: pointer;
+}
+
+.menu_tab {
+    border-style: solid;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 18px;
+}
+
+.category_tag {
+    border-radius: 25px;
+    border-style: solid;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 18px;
+}
+
+.purple_background {
+    color: white;
+    border-color: black;
+    background: #BB00BB
+}
+.purple_background:hover {
+    background: #EE00EE
+}
+
+.blue_background {
+    color: white;
+    border-color: black;
+    background: #00AAFF
+}
+.blue_background:hover {
+    background: #00CCFF
+}
+
+.red_background {
+    color: white;
+    border-color: black;
+    background: #EE0000
+}
+.red_background:hover {
+    background: #FF0000
+}
+
+.green_background {
+    color: white;
+    border-color: black;
+    background: #88DD00
+}
+.green_background:hover {
+    background: #AADD00
+}
+
+.orange_background {
+    color: white;
+    border-color: black;
+    background: #FFAA00
+}
+.orange_background:hover {
+    background: #FFCC00
+}
+
+.yellow_background {
+    border-color: black;
+    background: #FFFF00;
+}
+.yellow_background:hover {
+    background: #EEEE00;
+}
+
+.white_background {
+    background: #FFFFFF
+}
+.white_background:hover {
+    background: #EEEEEE
+}
+
+.grey_background {
+    background: #BBBBBB;
+}
+.grey_background:hover {
+    background: #EEEEEE;
+}

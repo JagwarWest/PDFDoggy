@@ -151,27 +151,39 @@ def remove_document():
 @app.route("/api/documents/upload/", methods=["POST"])
 def upload_document():
     print(request.form)
-    filename = secure_filename(request.form["filename"])
     collection = secure_filename(request.form["collection"])
-    document = request.files['document']
+    for fil in request.files:
+        print(fil)
+        document = request.files[fil]
+        filename = secure_filename(document.filename)
+        if collection not in os.listdir("pdfs/"):
+            subprocess.Popen(["mkdir", "pdfs/" + collection], shell=False).wait()
 
-    if collection not in os.listdir("pdfs/"):
-        subprocess.Popen(["mkdir", "pdfs/" + collection], shell=False).wait()
+        print("FILENAME:", "pdfs/" + collection + "/" + filename)
+        document.save("pdfs/" + collection + "/" + filename)
 
-    print("FILENAME:", "pdfs/" + collection + "/" + filename)
-    document.save("pdfs/" + collection + "/" + filename)
+        print("EXTRACTING:", filename)
+        process = subprocess.Popen(["python3", "PDFImporter.py", collection, filename], shell=False)
+        return_code = process.wait()
 
-    print("EXTRACTING:", filename)
-    process = subprocess.Popen(["python3", "PDFImporter.py", collection, filename], shell=False)
-    return_code = process.wait()
-
-    if return_code != 0:
-        subprocess.Popen(["rm", "pdfs/"+collection+"/"+filename], shell=False).wait()
-        if len(os.listdir("pdfs/" + collection)) == 0:
-          subprocess.Popen(["rmdir", "pdfs/" + collection], shell=False).wait()
-        return """There was an error processing the file. Is it really a PDF?"""
+        if return_code != 0:
+            subprocess.Popen(["rm", "pdfs/"+collection+"/"+filename], shell=False).wait()
+            if len(os.listdir("pdfs/" + collection)) == 0:
+              subprocess.Popen(["rmdir", "pdfs/" + collection], shell=False).wait()
+            return """There was an error processing the file. Is it really a PDF?"""
 
     return """OK"""
+
+@app.route("/api/categories/remove/", methods=["POST"])
+def remove_category():
+    remove_params = json.loads(request.get_data().decode("utf8"))
+    print(remove_params)
+    collection = remove_params["collection"]
+    database =  pymongo.MongoClient().pdfs
+    database.drop_collection(collection)
+    subprocess.Popen(["rm", "-r", "pdfs/" + collection + "/"], shell=False).wait()
+    return json.dumps({"Result": "OK"})
+
 
 @app.route("/", methods=["GET"])
 def get():
