@@ -9,7 +9,7 @@ function create_document_table(docs) {
             titlename = titlename.substring(0,30) + "..."
         }
 
-        table_html += "<td style='padding-right:10px' title='"+i.capit()+"'>" + titlename + "<img category_name='"+i+"' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/></td>";
+        table_html += "<td style='padding-right:10px' title='"+i.capit()+"'>" + titlename + " ("+docs[i].length+" docs)<img category_name='"+i+"' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/></td>";
     });
     table_html += "</tr><thead>";
 
@@ -71,7 +71,8 @@ function list_documents() {
                 }
             }
         }
-        show_section(manage_documents);
     }); 
     xhr.send();
 }
+
+list_documents();

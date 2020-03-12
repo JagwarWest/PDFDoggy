@@ -107,11 +107,11 @@ function create_categories_table() {
 function select_search_mode(index) {
     for(var i=0; i<mode_selectors.length;i++) {
         if(i != index) {
-            mode_selectors[i].setAttribute("class", "menu_tab white_background");
+            mode_selectors[i].setAttribute("class", "category_tag white_background");
             mode_selectors[i].setAttribute("checked", "false");
         }
         else {
-            mode_selectors[i].setAttribute("class", "menu_tab yellow_background");
+            mode_selectors[i].setAttribute("class", "category_tag yellow_background");
             mode_selectors[i].setAttribute("checked", "true");
         }
     }

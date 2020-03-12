@@ -4,6 +4,8 @@ import json
 import subprocess
 import copy
 
+import threading
+
 import pymongo
 from flask import Flask
 from flask import request
@@ -148,31 +150,43 @@ def remove_document():
     return json.dumps({"Result": "OK"})
 
 
-@app.route("/api/documents/upload/", methods=["POST"])
-def upload_document():
-    print(request.form)
-    collection = secure_filename(request.form["collection"])
-    for fil in request.files:
-        print(fil)
-        document = request.files[fil]
+def thread_upload_document(thread_id, collection, file_keys, request_files):
+    while(len(file_keys) > 0):
+        document = request_files[file_keys.pop()]
         filename = secure_filename(document.filename)
         if collection not in os.listdir("pdfs/"):
             subprocess.Popen(["mkdir", "pdfs/" + collection], shell=False).wait()
 
-        print("FILENAME:", "pdfs/" + collection + "/" + filename)
+        print("Thread %d" % thread_id, "FILENAME:", "pdfs/" + collection + "/" + filename)
         document.save("pdfs/" + collection + "/" + filename)
 
-        print("EXTRACTING:", filename)
+        print("Thread %d" % thread_id, "EXTRACTING:", filename)
         process = subprocess.Popen(["python3", "PDFImporter.py", collection, filename], shell=False)
         return_code = process.wait()
 
         if return_code != 0:
+            print("There was an error with: %s", document.filename)
             subprocess.Popen(["rm", "pdfs/"+collection+"/"+filename], shell=False).wait()
             if len(os.listdir("pdfs/" + collection)) == 0:
               subprocess.Popen(["rmdir", "pdfs/" + collection], shell=False).wait()
-            return """There was an error processing the file. Is it really a PDF?"""
 
-    return """OK"""
+
+@app.route("/api/documents/upload/", methods=["POST"])
+def upload_documents_multithreaded():
+    print(request.form)
+    collection = secure_filename(request.form["collection"])
+    thread_list = []
+    num_threads = 8
+    file_keys = list(request.files)
+    for i in range(0,num_threads):
+        thread_list.append(threading.Thread(target=thread_upload_document, args=(i, collection, file_keys, request.files)))
+    for thread in thread_list:
+        thread.start()
+    for i in range(0,num_threads):
+        thread_list[i].join()
+        print("Thread %d joined" % i)
+    return "OK"
+
 
 @app.route("/api/categories/remove/", methods=["POST"])
 def remove_category():

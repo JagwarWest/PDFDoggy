@@ -33,7 +33,7 @@
         <div align="center">
             <table>
                 <tr>
-                    <td id="list_docs" class="menu_tab purple_background" onclick="list_documents(); tab_selection(0);">
+                    <td id="list_docs" class="menu_tab purple_background" onclick="show_section(0); tab_selection(0);">
                         Manage Documents
                     </td>
 
@@ -67,9 +67,9 @@
             <h3>Search Modes</h3>
             <table>
                 <tr>
-                    <td checked="true"  id="matchall" onclick="select_search_mode(0)" class="menu_tab yellow_background" title="Only find pages with all the specified terms">Pages contain all terms</td>
-                    <td checked="false" id="normal" onclick="select_search_mode(1)" class="menu_tab white_background" title="Normal search. At least one term has to be included in a document">Normal search</td>
-                    <td checked="false" id="in_one_document" onclick="select_search_mode(2)" class="menu_tab white_background" title="Only find documents with all specified terms included (do not have to be on the same page)">Documents contain all terms</td>
+                    <td checked="true"  id="matchall" onclick="select_search_mode(0)" class="category_tag yellow_background" title="Only find pages with all the specified terms">Pages contain all terms</td>
+                    <td checked="false" id="normal" onclick="select_search_mode(1)" class="category_tag white_background" title="Normal search. At least one term has to be included in a document">Normal search</td>
+                    <td checked="false" id="in_one_document" onclick="select_search_mode(2)" class="category_tag white_background" title="Only find documents with all specified terms included (do not have to be on the same page)">Documents contain all terms</td>
                 </tr>
             </table>
 
