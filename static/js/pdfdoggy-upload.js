@@ -1,3 +1,9 @@
+document.getElementById("upload_category").addEventListener('keypress', function(event) {
+    if (event.keyCode == 13) {
+        upload_document();
+    }
+});
+
 function upload_document() {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/documents/upload/");

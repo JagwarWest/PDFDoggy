@@ -9,7 +9,7 @@ function create_document_table(docs) {
             titlename = titlename.substring(0,30) + "..."
         }
 
-        table_html += "<td style='padding-right:10px' title='"+i.capit()+"'>" + titlename + " ("+docs[i].length+" docs)<img category_name='"+i+"' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/></td>";
+        table_html += "<th style='padding-right:10px;' title='"+i.capit()+"'>" + titlename + " ("+docs[i].length+" docs)<img category_name='"+i+"' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/></th>";
     });
     table_html += "</tr><thead>";
 
@@ -37,7 +37,7 @@ function create_document_table(docs) {
                     displayname = docs[key][i].substring(0,30) + "..."
                 }
 
-                table_html += "<a style='float:left;' target='_blank' title='"+docs[key][i]+"'rel='noopener noreferrer' href='/" + key + "/" + docs[key][i] + "'>" + displayname + "</a><img collection='"+key+"' filename='"+docs[key][i]+"'class='pictogram' src='/static/img/trash.png' title='Remove "+docs[key][i]+"' onclick='remove_document(event)'/>";
+                table_html += "<a style='float:left; padding-left: 3px;' target='_blank' title='"+docs[key][i]+"'rel='noopener noreferrer' href='/" + key + "/" + docs[key][i] + "'>" + displayname + "</a><img collection='"+key+"' filename='"+docs[key][i]+"'class='pictogram' src='/static/img/trash.png' title='Remove "+docs[key][i]+"' onclick='remove_document(event)'/>";
             }
             table_html += "</td>";
         });

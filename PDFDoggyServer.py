@@ -174,7 +174,11 @@ def thread_upload_document(thread_id, collection, file_keys, request_files):
 @app.route("/api/documents/upload/", methods=["POST"])
 def upload_documents_multithreaded():
     print(request.form)
-    collection = secure_filename(request.form["collection"])
+    collection = secure_filename(request.form["collection"].strip())
+
+    if len(collection) == 0:
+        return "You have to specify a category name!"
+
     thread_list = []
     num_threads = 8
     file_keys = list(request.files)
