@@ -87,9 +87,16 @@ def search_targets2(search_terms, targets, matchall, under_as_white, in_one_docu
 
 def list_documents():
     database = pymongo.MongoClient().pdfs
-    result = {}
+    result = {
+        "doc_list": {},
+        "page_count": 0
+    }
     for name in database.list_collection_names():
-        result[name] = database[name].distinct("document", {})
+        result["doc_list"][name] = {}
+        result["doc_list"][name]["names"] = database[name].distinct("document", {})
+        category_page_count = database[name].count_documents({})
+        result["doc_list"][name]["category_page_count"] = category_page_count
+        result["page_count"] += category_page_count
     return result
 
 
