@@ -80,7 +80,7 @@ function create_categories_table() {
         }
 
         table_string = "";
-        var columns = 6
+        var columns = 5
         for(var i in types) {
             if ((i % columns) == 0) {
                 table_string += "<tr>";

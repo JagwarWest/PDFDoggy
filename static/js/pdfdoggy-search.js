@@ -10,13 +10,22 @@ function search_documents() {
         }
     }
 
+    var display = document.getElementById("search_results");
+
     last_search_flavor = flavor;
     var terms = document.getElementById("search_terms").value.trim(); 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/search/");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.addEventListener("load", function() {
-        display_search_results(JSON.parse(xhr.responseText));
+
+        if(xhr.status == 200) {
+            display_search_results(JSON.parse(xhr.responseText));
+        }
+        else {
+            alert("Your search caused an error\n"+xhr.responseText);
+            show_section(search_view);
+        }
     });
 
     // search the selected collections
@@ -45,8 +54,9 @@ function search_documents() {
     };
 
     xhr.send(JSON.stringify(terms_object));
-    var display = document.getElementById("search_results");
+    
     display.innerHTML = "<b>Waiting for server. A search might take some seconds!";
+    show_section(search_results);
 }
 
 function display_search_results(results) {
