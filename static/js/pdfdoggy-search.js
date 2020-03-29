@@ -33,7 +33,7 @@ function search_documents() {
     var checkboxes = document.getElementById("category_table").getElementsByTagName("div");
     for(var cb of checkboxes) {
         if(cb.getAttribute("checked") === "true") {
-            targets.push(cb.textContent);
+            targets.push(cb.getAttribute("title"));
         }
     }
 

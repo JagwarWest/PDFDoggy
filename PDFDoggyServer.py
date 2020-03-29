@@ -29,20 +29,14 @@ def create_regex_query(terms, matchall, under_as_white):
             query[operator].append({"text": {"$not": re.compile(term[1:], re.IGNORECASE)}})
         else:
             query[operator].append({"text": re.compile(term, re.IGNORECASE)})
-    print(query)
+    #print(query)
     return query
 
-def search_targets2(search_terms, targets, matchall, under_as_white, in_one_document=True):
-    existing_collections = pymongo.MongoClient().pdfs.list_collection_names()
-    result = {}
-    not_terms = []
-    for t in search_terms:
-        if t.startswith("-"):
-            not_terms.append(t)
-    if len(not_terms) == len(search_terms):
-        return {}
-
-    for target in targets:
+def search_thread_function(result, search_terms, not_terms, targets, matchall, under_as_white, in_one_document, existing_collections):
+    
+    print(targets)
+    while (len(targets) > 0):
+        target = targets.pop()
         if target in existing_collections:
             coll = pymongo.MongoClient().pdfs[target]
             if matchall:
@@ -73,6 +67,27 @@ def search_targets2(search_terms, targets, matchall, under_as_white, in_one_docu
         else:
             print("TSK, TSK: ", target)
 
+
+def search_targets3(search_terms, targets, matchall, under_as_white, in_one_document=True):
+    existing_collections = pymongo.MongoClient().pdfs.list_collection_names()
+
+    not_terms = []
+    for t in search_terms:
+        if t.startswith("-"):
+            not_terms.append(t)
+    if len(not_terms) == len(search_terms):
+        return {}
+
+    result = {}
+    num_threads = 8
+    threads = []
+    for i in range(num_threads):
+        threads.append(threading.Thread(target=search_thread_function, args=(result, search_terms, not_terms, targets, matchall, under_as_white, in_one_document, existing_collections)))
+        threads[i].start()
+
+    for thread in threads:
+        thread.join()
+
     # prune documents with only partial matches
     if in_one_document and not matchall:
         result2 = copy.deepcopy(result)
@@ -84,6 +99,7 @@ def search_targets2(search_terms, targets, matchall, under_as_white, in_one_docu
                 del result2[cat]
         result = result2
     return result
+
 
 def list_documents():
     database = pymongo.MongoClient().pdfs
@@ -122,7 +138,7 @@ def search():
     if (len(search_terms) == 1 and search_terms[0] == "") or len(search_terms) == 0:
         return "{}"
 
-    result = search_targets2(search_terms, targets, matchall, True, in_one_document)
+    result = search_targets3(search_terms, targets, matchall, True, in_one_document)
     return json.dumps(result, ensure_ascii=False).encode("utf8")
 
 

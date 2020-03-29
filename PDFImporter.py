@@ -15,6 +15,7 @@ def import_pdf2(filename, collection_name):
     pdfreader = fitz.open(filepath)
 
     for i in range(pdfreader.pageCount):
+      try:
         page_text = pdfreader.getPageText(i)
         page_text = page_text.encode("utf16", "surrogatepass").decode("utf16")
 
@@ -32,6 +33,8 @@ def import_pdf2(filename, collection_name):
             "text": page_text.lower().strip()
         }
         database[collection_name].insert_one(document)
+      except Exception as e:
+        print("error while reading page %d of %s" % (i, filepath))
     print("DONE", collection_name, filename)
 
 
