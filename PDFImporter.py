@@ -19,11 +19,12 @@ def import_pdf2(filename, collection_name):
         page_text = pdfreader.getPageText(i)
         page_text = page_text.encode("utf16", "surrogatepass").decode("utf16")
 
-        # weeding out some bad characters
-        page_text = page_text.replace("ﬃ", "ffi")
-        page_text = page_text.replace("ﬂ", "fl")
-        page_text = page_text.replace("ﬀ", "ff")
-        page_text = page_text.replace("ﬁ", "fi")
+        # weeding out some weird characters 
+        page_text = page_text.replace("ﬃ", "ffi").replace("ﬂ", "fl").replace("ﬀ", "ff").replace("ﬁ", "fi").replace("n­", "n")
+        page_text = page_text.replace("𝐶", "C").replace("𝐷", "D").replace("𝑖", "i").replace("𝑊", "W").replace("ℎ", "h")
+        page_text = page_text.replace("𝐸", "E").replace("𝐹", "F").replace("𝑅", "R").replace("𝐺", "G").replace("𝐵","B")
+        page_text = page_text.replace("𝑟", "r").replace("𝐾", "K").replace("𝐿", "L").replace("𝑀","M").replace("𝑂", "O")
+        page_text = page_text.replace("𝑃", "P").replace("𝑡𝑡", "tt").replace("𝐴", "A").replace("𝑉", "V").replace(" ", " ")
         page_text = page_text.replace("\n", " ")
 
         document = {
