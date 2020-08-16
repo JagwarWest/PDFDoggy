@@ -124,7 +124,14 @@ function show_section(index=pdf_list) {
     for(var s of sections) {
         s.setAttribute("style", "display:none");
     }
+
     sections[index].setAttribute("style", "");
+
+    if(index==search_view) {
+        searcher = document.getElementById("search_terms");
+        searcher.focus();
+        searcher.select();
+    }
 } 
 
 function tab_selection(index) {
