@@ -9,7 +9,7 @@ import threading
 import pymongo
 from flask import Flask
 from flask import request
-from flask import send_from_directory
+from flask import send_from_directory, send_file, abort
 from werkzeug.utils import secure_filename
 #import ssl
 
@@ -19,7 +19,6 @@ def create_regex_query(terms, matchall, under_as_white):
         operator = "$and"
     query = {operator: []}
 
-    #pabe.find({"$and":[{"text":re.compile("heap")}, {"text":re.compile("exim")}]})
     for term in terms:
         if under_as_white:
             term = term.replace("_", " ")
@@ -156,6 +155,34 @@ def list_registered_documents():
 @app.route("/api/types/", methods=["GET"])
 def get_document_types():
     return json.dumps({"types": pymongo.MongoClient().pdfs.list_collection_names()})
+
+
+@app.route("/api/documents/fullbackup/", methods=["POST"])
+def documents_fullbackup():
+    #subprocess.Popen(["rm", "pdfs/" + collection + "/" + remove_params["filename"]], shell=False).wait()
+    #subprocess.Popen(["rmdir", "pdfs/" + collection], shell=False).wait()
+
+    subprocess.Popen(["zip", "-r", "PDFDoggyFullBackup.zip", "pdfs/"], shell=False).wait()
+    #return send_from_directory(".", "PDFDoggyBackup.zip")
+    return send_file("PDFDoggyFullBackup.zip")
+    #return json.dumps({"Result": "OK"})
+
+@app.route("/api/categories/backup/", methods=["POST"])
+def category_backup():
+    #subprocess.Popen(["rm", "pdfs/" + collection + "/" + remove_params["filename"]], shell=False).wait()
+    #subprocess.Popen(["rmdir", "pdfs/" + collection], shell=False).wait()
+    remove_params = json.loads(request.get_data().decode("utf8"))
+    print(remove_params)
+    collection = remove_params["collection"]
+
+    if collection in pymongo.MongoClient().pdfs.list_collection_names():
+        subprocess.Popen(["zip", "-r", "PDFDoggyBackup-%s.zip" % collection, "pdfs/%s" % collection], shell=False).wait()
+        return send_file("PDFDoggyBackup-%s.zip" % collection)
+    else:
+        print("SOMETHING IS FISHY", collection)
+        #return json.dumps({"Result": "OK"})
+        abort(404, description="Resource not found")
+
 
 
 @app.route("/api/documents/remove/", methods=["POST"])

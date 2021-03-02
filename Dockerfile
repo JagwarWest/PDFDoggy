@@ -1,7 +1,7 @@
  FROM ubuntu:20.04
 
 # packages
-RUN apt update && apt install -y python3-pip gnupg2 locales
+RUN apt-get update && apt-get install -y python3-pip gnupg2 locales
 
 # setup locales
 RUN locale-gen en_US.UTF-8
@@ -15,7 +15,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 68818C72E52529D
 RUN ln -snf /usr/share/zoneinfo/Europe/Minsk /etc/localtime && echo Europe/Minsk > /etc/timezone
 
 # install mongodb
-RUN apt update && apt install -y mongodb-org
+RUN apt-get update && apt-get install -y mongodb-org zip
 
 # setup python env
 RUN pip3 install --upgrade pip

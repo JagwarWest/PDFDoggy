@@ -9,7 +9,7 @@ function create_document_table(docs) {
             titlename = titlename.substring(0,30) + "..."
         }
 
-        table_html += "<th style='padding-right:10px;' title='"+i.capit()+"'>" + titlename + " ("+docs[i]["names"].length+" docs | "+docs[i]["category_page_count"]+" p)<img category_name='"+i+"' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/></th>";
+        table_html += "<th style='padding-right:10px;' title='"+i.capit()+"'>" + titlename + " ("+docs[i]["names"].length+" docs | "+docs[i]["category_page_count"]+" p)<img category_name='"+i+"' style='margin-left:5px' class='pictogram' src='/static/img/trash.png' title='Remove "+i+"' onclick='remove_category(event)'/><img category_name='"+i+"' class='pictogram' src='/static/img/download.png' title='Download "+i+" as ZIP' onclick='backup_category(event)'/></th>";
     });
     table_html += "</tr><thead>";
 
